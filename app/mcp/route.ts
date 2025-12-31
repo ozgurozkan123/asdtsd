@@ -1,7 +1,13 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
-// IMPORTANT: Use createMcpHandler directly without manual header patching.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const capabilities: any = {
+  tools: {
+    "do-arjun": { description: "Run Arjun to discover hidden HTTP parameters" },
+  },
+};
+
 const handler = createMcpHandler(
   async (server) => {
     server.tool(
@@ -35,13 +41,7 @@ const handler = createMcpHandler(
       }
     );
   },
-  {
-    capabilities: {
-      tools: {
-        "do-arjun": { description: "Run Arjun to discover hidden HTTP parameters" },
-      },
-    },
-  },
+  { capabilities },
   {
     basePath: "",
     verboseLogs: true,
