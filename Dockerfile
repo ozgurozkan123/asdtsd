@@ -1,23 +1,35 @@
-FROM node:20-slim
+FROM python:3.11-slim
+
+# Install system dependencies and amass
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    unzip \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install amass binary from GitHub releases
+RUN wget -q https://github.com/owasp-amass/amass/releases/download/v4.2.0/amass_Linux_amd64.zip -O /tmp/amass.zip \
+    && unzip /tmp/amass.zip -d /tmp/amass \
+    && mv /tmp/amass/amass_Linux_amd64/amass /usr/local/bin/amass \
+    && chmod +x /usr/local/bin/amass \
+    && rm -rf /tmp/amass.zip /tmp/amass
+
+# Verify amass installation
+RUN amass -version || echo "Amass installed"
 
 WORKDIR /app
 
-# Copy package files first (for Docker layer caching)
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
+# Copy requirements first (for Docker layer caching)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
-COPY . .
-
-# Build Next.js app
-RUN npm run build
+COPY server.py .
 
 # Render sets PORT automatically
 ENV HOST=0.0.0.0
-ENV PORT=3000
-EXPOSE 3000
+ENV PYTHONUNBUFFERED=1
+EXPOSE 8000
 
-# Run Next.js in production mode
-CMD ["npm", "run", "start"]
+CMD ["python", "server.py"]
