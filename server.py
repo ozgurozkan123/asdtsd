@@ -96,12 +96,12 @@ def amass(
         return f"Error executing amass: {str(e)}"
 
 
-# Run the server with SSE transport
+# Run the server with streamable-http transport for standard HTTP POST
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     
     mcp.run(
-        transport="sse",
+        transport="streamable-http",
         host="0.0.0.0",
         port=port,
         path="/mcp"
