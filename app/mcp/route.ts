@@ -21,7 +21,7 @@ const handler = createMcpHandler(
         if (!url && !textFile) {
           return {
             content: [{
-              type: "text",
+              type: "text" as const,
               text: "Error: Either 'url' or 'textFile' parameter is required."
             }]
           };
@@ -50,7 +50,7 @@ const handler = createMcpHandler(
 
         return {
           content: [{
-            type: "text",
+            type: "text" as const,
             text: `To discover hidden HTTP parameters, run this command locally:\n\n${command}\n\nArjun is a Python tool. Install it with: pip install arjun\n\nThis MCP server provides the interface to generate Arjun commands.`
           }]
         };
@@ -59,11 +59,7 @@ const handler = createMcpHandler(
   },
   {
     capabilities: {
-      tools: {
-        "do-arjun": {
-          description: "Generate Arjun command to discover hidden HTTP parameters"
-        }
-      }
+      tools: {}
     }
   },
   {
